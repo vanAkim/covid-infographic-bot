@@ -94,9 +94,17 @@ def info_bloc(data_byDays, moving_sqr, empty_motif, filled_motif):
                                                 empty_motif,
                                                 filled_motif)).tolist()  # transformed into str columns: ['⬛\n⬛\n', '⬛\n💟\n', etc]
 
-        return join_trends(relativ_rate,
-                           empty_motif,
-                           filled_motif)  # transformed into full infographic bloc
+        info_blocs = join_trends(relativ_rate,
+                                 empty_motif,
+                                 filled_motif)  # transformed into full infographic bloc
+
+        ## Adding min and max next to lines
+        idx_endMax = len(data_byDays)*2 + 1                             # include one '\n'
+        idx_end = (len(data_byDays) + 1)*(moving_sqr + 2)
+        info_blocs = f"{info_blocs[0:idx_endMax]} ← Max: {round(max(data_byDays),2)}{info_blocs[idx_endMax:idx_end]} " \
+                     f"← Min: {round(min(data_byDays),2)}"
+
+        return info_blocs
 
 
 #=======================================================================================================================
@@ -173,7 +181,7 @@ infographic_hosOccRate = info_bloc(rate_days,
 
 
 ## Adding some top lines to emphasize the infographic
-title_line = "Tension hospitalière sur la capacité en réanimation"
+title_line = "Tension hospitalière en réanimation"
 
 orange = '🟠'
 red = '🔴'
@@ -187,9 +195,9 @@ new_hos = abs(rate_days.iloc[-1] - rate_days.iloc[-2])
 
 today_line = f"{df.loc[df.shape[0]-1, 'date']}: {color_res} {round(rate_days.iloc[-1], 2)}% {trend_res}"
 
-lstDays_line = f"{days_toCompute} derniers jours: Min {round(min(rate_days),2)}% Max {round(max(rate_days),2)}%"
+lstDays_line = f"Tendance {days_toCompute} derniers jours"
 
-lgdSqr_line = f"{filled_pattern}≈ +{round((max(rate_days) - min(rate_days))/moving_squares,2)}%"
+lgdSqr_line = f"Légende: {filled_pattern}≈ +{round((max(rate_days) - min(rate_days))/moving_squares,2)}%"
 
 
 ## Wrap-up
@@ -245,9 +253,9 @@ sign_res = "+" if trend_res == up_pattern else "-"
 new_hos = abs(rate_days.iloc[-1] - rate_days.iloc[-2])
 today_line = f"{df.loc[df.shape[0]-1, 'date']}: {rate_days.iloc[-1]} {trend_res}"
 
-lstDays_line = f"{days_toCompute} derniers jours: Min {min(rate_days)} Max {max(rate_days)}"
+lstDays_line = f"Tendance {days_toCompute} derniers jours"
 
-lgdSqr_line = f"{filled_pattern}≈ +{math.floor((max(rate_days)-min(rate_days))/moving_squares)}"
+lgdSqr_line = f"Légende: {filled_pattern}≈ +{math.floor((max(rate_days)-min(rate_days))/moving_squares)}"
 
 
 ## Wrap-up
@@ -303,9 +311,9 @@ new_hos = abs(rate_days.iloc[-1] - rate_days.iloc[-2])
 
 today_line = f"{df.loc[df.shape[0]-1, 'date']}: {rate_days.iloc[-1]} {trend_res}"
 
-lstDays_line = f"{days_toCompute} derniers jours: Min {min(rate_days)} Max {max(rate_days)}"
+lstDays_line = f"Tedance {days_toCompute} derniers jours"
 
-lgdSqr_line = f"{filled_pattern}: +{math.floor((max(rate_days) - min(rate_days))/moving_squares)}"
+lgdSqr_line = f"Légende: {filled_pattern}≈ +{math.floor((max(rate_days) - min(rate_days))/moving_squares)}"
 
 
 ## Wrap-up
@@ -328,7 +336,9 @@ rt_sources = f"Sources et données: @SantePubliqueFr @datagouvfr" \
 rt_dcHos = rt_exactNmb + '\n' + rt_sources
 
 
-
+# print(infographic_hosOccRate)
+# print(infographic_hosPpl)
+# print(infographic_dcHos)
 
 # twit_txtfile = infographic_hosOccRate + '\n' + rt_hosOccRate + '\n' +\
 #                infographic_hosPpl + '\n' + rt_hosPpl + '\n' + \
@@ -343,8 +353,14 @@ rt_dcHos = rt_exactNmb + '\n' + rt_sources
 
 
 #Authenticate to Twitter
-auth = tweepy.OAuthHandler(os.getenv("user_api"), os.getenv("user_key"))        # CONSUMER_KEY, CONSUMER_SECRET
-auth.set_access_token(os.getenv("content_api"), os.getenv("content_key"))       # ACCESS_TOKEN, ACCESS_TOKEN_SECRET
+user_api = os.getenv("user_api")
+user_key = os.getenv("user_key")
+content_api = os.getenv("content_api")
+content_key = os.getenv("content_key")
+
+
+auth = tweepy.OAuthHandler(user_api, user_key)        # CONSUMER_KEY, CONSUMER_SECRET
+auth.set_access_token(content_api, content_key)       # ACCESS_TOKEN, ACCESS_TOKEN_SECRET
 
 api = tweepy.API(auth)
 
@@ -358,18 +374,36 @@ except:
 
 ## Hosp rate infographic tweet
 api.update_status(infographic_hosOccRate)
+
 ## Retweet with explanation about the metric
 tweets = api.home_timeline(count=1)
 tweet = tweets[0]
-api.update_status(rt_expl_hosOccRate, args=(tweet.id,))
+api.update_status(rt_expl_hosOccRate, in_reply_to_status_id = tweet.id)
+
 ## Retweet with sources
-# tweets = api.home_timeline(count=1)
-# tweet = tweets[0]
-# api.update_status(rt_hosOccRate, args=[tweet.id])
-#
-#
-# api.update_status(infographic_hosPpl)
-# api.update_status(infographic_dcHos)
+tweets = api.home_timeline(count=1)
+tweet = tweets[0]
+api.update_status(rt_hosOccRate, in_reply_to_status_id = tweet.id)
+
+
+
+## Hosp ppl infographic tweet
+api.update_status(infographic_hosPpl)
+
+## Retweet with sources
+tweets = api.home_timeline(count=1)
+tweet = tweets[0]
+api.update_status(rt_hosPpl, in_reply_to_status_id = tweet.id)
+
+
+
+## Death infographic tweet
+api.update_status(infographic_dcHos)
+
+## Retweet with sources
+tweets = api.home_timeline(count=1)
+tweet = tweets[0]
+api.update_status(rt_dcHos, in_reply_to_status_id = tweet.id)
 
 
 
