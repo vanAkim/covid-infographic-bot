@@ -6,7 +6,7 @@ name: Python application
 on:
   # Schedule updates
   schedule:
-    - cron: "30 0 * * *"
+    - cron: "30 23 * * *"
   # Lines below let you run workflow manually and on each commit
   #push: {branches: ["master", "main"]}
 
