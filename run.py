@@ -3,6 +3,8 @@ import requests
 import math
 import numpy as np
 import io
+import tweepy
+import os
 
 
 #=======================================================================================================================
@@ -328,10 +330,39 @@ rt_dcHos = rt_exactNmb + '\n' + rt_sources
 
 
 
-twit_txtfile = infographic_hosOccRate + '\n' + rt_hosOccRate + '\n' +\
-               infographic_hosPpl + '\n' + rt_hosPpl + '\n' + \
-               infographic_dcHos + '\n' + rt_dcHos
+# twit_txtfile = infographic_hosOccRate + '\n' + rt_hosOccRate + '\n' +\
+#                infographic_hosPpl + '\n' + rt_hosPpl + '\n' + \
+#                infographic_dcHos + '\n' + rt_dcHos
+#
+#
+# with io.open('tweets.txt', 'w', encoding='utf8') as f:
+#     f.write(twit_txtfile)
 
 
-with io.open('tweets.txt', 'w', encoding='utf8') as f:
-    f.write(twit_txtfile)
+#=======================================================================================================================
+
+
+# Authenticate to Twitter
+auth = tweepy.OAuthHandler(os.getenv("user_api"), os.getenv("user_key"))        # CONSUMER_KEY, CONSUMER_SECRET
+auth.set_access_token(os.getenv("content_api"), os.getenv("content_key"))       # ACCESS_TOKEN, ACCESS_TOKEN_SECRET
+
+api = tweepy.API(auth)
+
+try:
+    api.verify_credentials()
+    print("Authentication OK")
+except:
+    print("Error during authentication")
+
+# Write main tweets
+api.update_status(infographic_hosOccRate)
+tweets = api.home_timeline(count=1)
+tweet = tweets[0]
+api.update_status(rt_hosOccRate, args=[tweet.id])
+
+
+api.update_status(infographic_hosPpl)
+api.update_status(infographic_dcHos)
+
+
+
