@@ -5,7 +5,7 @@ name: Python application
 
 on:
   schedule:
-    - cron:  '* 13 * * *'
+    - cron:  '0 13 * * *'
   # Lines below let you run workflow manually and on each commit
   # push: {branches: ["master", "main"]}
 
