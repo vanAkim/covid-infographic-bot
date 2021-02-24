@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8af02946-c896-4b75-90de-3510594591c8" name="Default Changelist" comment="Update YAML">
+    <list default="true" id="8af02946-c896-4b75-90de-3510594591c8" name="Default Changelist" comment="Change keys">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/standalone-py-scripts/tweets.py" beforeDir="false" afterPath="$PROJECT_DIR$/standalone-py-scripts/tweets.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/table-indicateurs-open-data-france.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/run.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/standalone-py-scripts/write-pattern-twit.py" beforeDir="false" afterPath="$PROJECT_DIR$/standalone-py-scripts/write-pattern-twit.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,7 +82,14 @@
       <option name="project" value="LOCAL" />
       <updated>1614129375006</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Change keys">
+      <created>1614167447384</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1614167447384</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -98,6 +107,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Fresh pycharm commit" />
     <MESSAGE value="Update YAML" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update YAML" />
+    <MESSAGE value="Change keys" />
+    <option name="LAST_COMMIT_MESSAGE" value="Change keys" />
   </component>
 </project>

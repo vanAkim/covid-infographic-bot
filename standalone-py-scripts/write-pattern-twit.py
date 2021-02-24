@@ -7,12 +7,13 @@ import io
 
 ## Download dataframe
 url = "https://www.data.gouv.fr/fr/datasets/r/f335f9ea-86e3-4ffa-9684-93c009d5e617" # URL stable
-myfile = requests.get(url)
-open('../data/table-indicateurs-open-data-france.csv', 'wb').write(myfile.content)
+# myfile = requests.get(url)
+# open('data/table-indicateurs-open-data-france.csv', 'wb').write(myfile.content)
 
 
 ## Load overall dataframe
-df = pd.read_csv('../data/table-indicateurs-open-data-france.csv')
+myfile = requests.get(url).content
+df = pd.read_csv(io.StringIO(myfile.decode('utf-8')))
 
 
 ## Overall parameters to construct the infographic
