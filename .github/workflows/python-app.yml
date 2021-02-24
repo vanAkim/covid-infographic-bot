@@ -4,13 +4,10 @@
 name: Python application
 
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
-  schedule:
-    # * is a special character in YAML so you have to quote this string
-    - cron:  '* * * * *'
+  # Schedule updates
+  schedule: [{cron: "* * * * *"}]
+  # Lines below let you run workflow manually and on each commit
+  push: {branches: ["master", "main"]}
 
 jobs:
   build:
