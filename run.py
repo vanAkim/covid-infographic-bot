@@ -201,9 +201,9 @@ infographic_hosOccRate = title_line + '\n\n' +\
 
 ## Following up tweet with sources
 
-rt_expl = "Proportion de patients atteints de COVID-19 actuellement en réanimation, en soins intensifs, " \
-          "ou en unité de surveillance continue rapportée au total des lits en capacité initiale, c’est-à-dire " \
-          "avant d’augmenter les capacités de lits de réanimation dans un hôpital"
+rt_expl_hosOccRate = "Proportion de patients atteints de COVID-19 actuellement en réanimation, en soins intensifs, " \
+                     "ou en unité de surveillance continue rapportée au total des lits en capacité initiale, c’est-à-dire " \
+                     "avant d’augmenter les capacités de lits de réanimation dans un hôpital"
 
 rt_exactNmb = f"Différence exacte depuis 24h: {sign_res}{round(new_hos,2)}%"
 
@@ -211,7 +211,7 @@ rt_sources = f"Sources et données: @SantePubliqueFr @datagouvfr" \
              f"\nhttps://www.data.gouv.fr/fr/datasets/synthese-des-indicateurs-de-suivi-de-lepidemie-covid-19/#_" \
              f"\nhttps://www.data.gouv.fr/fr/datasets/indicateurs-de-suivi-de-lepidemie-de-covid-19/#_"
 
-rt_hosOccRate = rt_expl + '\n' + rt_exactNmb + '\n' + rt_sources
+rt_hosOccRate = rt_exactNmb + '\n' + rt_sources
 
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -342,7 +342,7 @@ rt_dcHos = rt_exactNmb + '\n' + rt_sources
 #=======================================================================================================================
 
 
-# Authenticate to Twitter
+#Authenticate to Twitter
 auth = tweepy.OAuthHandler(os.getenv("user_api"), os.getenv("user_key"))        # CONSUMER_KEY, CONSUMER_SECRET
 auth.set_access_token(os.getenv("content_api"), os.getenv("content_key"))       # ACCESS_TOKEN, ACCESS_TOKEN_SECRET
 
@@ -356,6 +356,9 @@ except:
 
 # Write main tweets
 api.update_status(infographic_hosOccRate)
+tweets = api.home_timeline(count=1)
+tweet = tweets[0]
+api.update_status(rt_expl_hosOccRate, args=[tweet.id])
 tweets = api.home_timeline(count=1)
 tweet = tweets[0]
 api.update_status(rt_hosOccRate, args=[tweet.id])
