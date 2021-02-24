@@ -25,5 +25,11 @@ jobs:
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Execute py script # run the run.py to get the latest data
+      env:
+        content_api:  ${{ secrets.ACCESS_TOKEN }}
+        content_key: ${{ secrets.ACCESS_TOKEN_SECRET }}
+        user_api: ${{ secrets.CONSUMER_KEY }}
+        user_key: ${{ secrets.CONSUMER_SECRET }}
       run: |
         python run.py
+        python ./tweets.py

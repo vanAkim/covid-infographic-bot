@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\Akim van Eersel\Python_Projects\covid-vaccin-rt-bot\venv"
+VIRTUAL_ENV="C:\Users\Akim van Eersel\Python_Projects\covid-infographic-bot\venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
