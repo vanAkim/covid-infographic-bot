@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="7062b78b-757d-4099-af51-20306e3d3e46" name="Default Changelist" comment="Tweeting test">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/run.py" afterDir="false" />
-    </list>
+    <list default="true" id="7062b78b-757d-4099-af51-20306e3d3e46" name="Default Changelist" comment="Retweet testing" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -80,7 +77,21 @@
       <option name="project" value="LOCAL" />
       <updated>1614194582441</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Tweeting test v2">
+      <created>1614195014008</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1614195014008</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Retweet testing">
+      <created>1614204455957</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1614204455957</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -99,6 +110,8 @@
     <MESSAGE value="Setup pycharm project with new repo name" />
     <MESSAGE value="Setup new venv" />
     <MESSAGE value="Tweeting test" />
-    <option name="LAST_COMMIT_MESSAGE" value="Tweeting test" />
+    <MESSAGE value="Tweeting test v2" />
+    <MESSAGE value="Retweet testing" />
+    <option name="LAST_COMMIT_MESSAGE" value="Retweet testing" />
   </component>
 </project>

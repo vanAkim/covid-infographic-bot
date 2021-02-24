@@ -355,17 +355,21 @@ except:
     print("Error during authentication")
 
 # Write main tweets
+
+## Hosp rate infographic tweet
 api.update_status(infographic_hosOccRate)
+## Retweet with explanation about the metric
 tweets = api.home_timeline(count=1)
 tweet = tweets[0]
-api.update_status(rt_expl_hosOccRate, args=[tweet.id])
-tweets = api.home_timeline(count=1)
-tweet = tweets[0]
-api.update_status(rt_hosOccRate, args=[tweet.id])
-
-
-api.update_status(infographic_hosPpl)
-api.update_status(infographic_dcHos)
+api.update_status(rt_expl_hosOccRate, args=(tweet.id,))
+## Retweet with sources
+# tweets = api.home_timeline(count=1)
+# tweet = tweets[0]
+# api.update_status(rt_hosOccRate, args=[tweet.id])
+#
+#
+# api.update_status(infographic_hosPpl)
+# api.update_status(infographic_dcHos)
 
 
 

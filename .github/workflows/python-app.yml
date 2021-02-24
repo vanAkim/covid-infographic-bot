@@ -32,4 +32,3 @@ jobs:
         user_key: ${{ secrets.CONSUMER_SECRET }}
       run: |
         python run.py
-        python standalone-py-scripts/tweets.py
