@@ -101,8 +101,8 @@ def info_bloc(data_byDays, moving_sqr, empty_motif, filled_motif):
         ## Adding min and max next to lines
         idx_endMax = len(data_byDays)*2 + 1                             # include one '\n'
         idx_end = (len(data_byDays) + 1)*(moving_sqr + 2)
-        info_blocs = f"{info_blocs[0:idx_endMax]} ← Max: {round(max(data_byDays),2)}{info_blocs[idx_endMax:idx_end]} " \
-                     f"← Min: {round(min(data_byDays),2)}"
+        info_blocs = f"{info_blocs[0:idx_endMax]} ← Max {round(max(data_byDays),2)}{info_blocs[idx_endMax:idx_end]} " \
+                     f"← Min {round(min(data_byDays),2)}"
 
         return info_blocs
 
@@ -134,6 +134,68 @@ def dot3of5(x,limit):
 
 
 #=======================================================================================================================
+def tweet_strings(data_byDays, data_pddf, infograph_bloc, title, up_emoji, down_emoji, add_sticker=False, days_toCompute=10, moving_sqr=4):
+        """
+        :param data_byDays: Series of number of the explored data
+        :param data_pddf: Data frame of all data
+        :param infograph_bloc: String representing an infographic bloc
+        :param title: String of the tweet 1st line
+        :param up_emoji: String of a single character (emoji) of an increasing curve
+        :param down_emoji: String of a single character (emoji) of a decreasing curve
+        :param add_sticker: Boolean of whether adding a circle color and rounding the data or not. Used for % data.
+        :param days_toCompute: Number of days to show in infographic (columns).
+        :param moving_sqr: Numbers of lines to show in infrographic.
+        :return: String of the full tweet, String of a positive or negative sign, Number of de difference value between previous and current day.
+        """
+
+        ## Adding some top lines to emphasize the infographic
+        title_line = title
+
+        trend_res = up_emoji if data_byDays.iloc[-1] > data_byDays.iloc[-2] else down_emoji
+
+        ## Dual usage for % data: adding a color circle, rounding the number since isn't natural like others
+        if add_sticker:
+                orange = '🟠'
+                red = '🔴'
+                green = '🟢'
+
+                color_res = red if data_byDays.iloc[-1] > 60 else (green if data_byDays.iloc[-1] < 30 else orange)
+                color_res = f"{color_res} "
+
+                today_data = f"{round(data_byDays.iloc[-1], 2)}%"
+
+                lgd_data = f"{round((max(data_byDays) - min(data_byDays)) / moving_sqr, 2)}%"
+        else:
+                color_res = ""
+
+                today_data = f"{data_byDays.iloc[-1]}"
+
+                lgd_data = f"{math.floor((max(data_byDays) - min(data_byDays)) / moving_sqr)}"
+
+
+        today_line = f"{data_pddf.loc[data_pddf.shape[0] - 1, 'date']}: {color_res}{today_data} {trend_res}"
+
+        lstDays_line = f"👇Tendance {days_toCompute} derniers jours👇"
+
+        lgdSqr_line = f"Légende: {filled_pattern}≈ {lgd_data}"
+
+
+        ## Wrap-up
+        infograph_bloc = title_line + '\n\n' + \
+                         today_line + '\n\n' + \
+                         lstDays_line + '\n' + \
+                         infograph_bloc + '\n\n' + \
+                         lgdSqr_line
+
+
+        # Used in retweets to get the precise difference value from n-1 to current day
+        sign_res = "+" if trend_res == up_emoji else "-"
+        diff_today = abs(data_byDays.iloc[-1] - data_byDays.iloc[-2])
+
+        return [infograph_bloc, sign_res, diff_today]
+
+
+#=======================================================================================================================
 # From write-pattern-twit.py
 
 
@@ -153,6 +215,8 @@ df = pd.read_csv(io.StringIO(myfile.decode('utf-8')))
 ## Overall parameters to construct the infographic
 days_toCompute = 10
 moving_squares = 4  # seems to be the more elegant infographic pattern
+down_pattern = "📉"
+up_pattern = "📈"
 
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -161,15 +225,13 @@ moving_squares = 4  # seems to be the more elegant infographic pattern
 ## Parameters to construct the infographic
 empty_pattern = "⬛"
 filled_pattern = "💟"
-down_pattern = "📉"
-up_pattern = "📈"
 
 
 ## Get only the required values from data
 rate_days = df.loc[df.shape[0] - days_toCompute: df.shape[0] + 1,
              "TO"]
 
-## Turn propotions into %
+## Turn proportions into %
 rate_days = rate_days.apply(lambda x: x*100)
 
 
@@ -180,32 +242,13 @@ infographic_hosOccRate = info_bloc(rate_days,
                                filled_pattern)
 
 
-## Adding some top lines to emphasize the infographic
+## Create main tweet with top lines and infograph
 title_line = "Tension hospitalière en réanimation"
 
-orange = '🟠'
-red = '🔴'
-green = '🟢'
-
-trend_res = up_pattern if rate_days.iloc[-1] > rate_days.iloc[-2] else down_pattern
-color_res = red if rate_days.iloc[-1] > 60 else (green if rate_days.iloc[-1] < 30 else orange)
-
-sign_res = "+" if trend_res ==  up_pattern else "-"
-new_hos = abs(rate_days.iloc[-1] - rate_days.iloc[-2])
-
-today_line = f"{df.loc[df.shape[0]-1, 'date']}: {color_res} {round(rate_days.iloc[-1], 2)}% {trend_res}"
-
-lstDays_line = f"Tendance {days_toCompute} derniers jours"
-
-lgdSqr_line = f"Légende: {filled_pattern}≈ +{round((max(rate_days) - min(rate_days))/moving_squares,2)}%"
-
-
-## Wrap-up
-infographic_hosOccRate = title_line + '\n\n' +\
-                         today_line + '\n\n' +\
-                         lstDays_line + '\n' +\
-                         lgdSqr_line + '\n\n' +\
-                         infographic_hosOccRate
+infographic_hosOccRate, sign_res, diff_value = tweet_strings(rate_days, df, infographic_hosOccRate,
+                                                          title_line,
+                                                          up_pattern, down_pattern,
+                                                          True, days_toCompute, moving_squares)
 
 ## Following up tweet with sources
 
@@ -213,7 +256,7 @@ rt_expl_hosOccRate = "Proportion de patients atteints de COVID-19 actuellement e
                      "ou en unité de surveillance continue rapportée au total des lits en capacité initiale, c’est-à-dire " \
                      "avant d’augmenter les capacités de lits de réanimation dans un hôpital"
 
-rt_exactNmb = f"Différence exacte depuis 24h: {sign_res}{round(new_hos,2)}%"
+rt_exactNmb = f"Différence exacte depuis 24h: {sign_res}{round(diff_value,2)}%"
 
 rt_sources = f"Sources et données: @SantePubliqueFr @datagouvfr" \
              f"\nhttps://www.data.gouv.fr/fr/datasets/synthese-des-indicateurs-de-suivi-de-lepidemie-covid-19/#_" \
@@ -229,8 +272,6 @@ rt_hosOccRate = rt_exactNmb + '\n' + rt_sources
 ## Parameters to construct the infographic
 empty_pattern = "⬛"
 filled_pattern = "🥼"
-down_pattern = "📉"
-up_pattern = "📈"
 
 
 ## Get only the required values from data
@@ -245,32 +286,21 @@ infographic_hosPpl = info_bloc(rate_days,
                                filled_pattern)
 
 
-## Adding some top lines to emphasize the infographic
+## Create main tweet with top lines and infograph
 title_line = "Patients hospitalisés pour COVID-19"
 
-trend_res = up_pattern if rate_days.iloc[-1] > rate_days.iloc[-2] else down_pattern
-sign_res = "+" if trend_res == up_pattern else "-"
-new_hos = abs(rate_days.iloc[-1] - rate_days.iloc[-2])
-today_line = f"{df.loc[df.shape[0]-1, 'date']}: {rate_days.iloc[-1]} {trend_res}"
 
-lstDays_line = f"Tendance {days_toCompute} derniers jours"
-
-lgdSqr_line = f"Légende: {filled_pattern}≈ +{math.floor((max(rate_days)-min(rate_days))/moving_squares)}"
-
-
-## Wrap-up
-infographic_hosPpl = title_line + '\n\n' +\
-                         today_line + '\n\n' +\
-                         lstDays_line + '\n' +\
-                         lgdSqr_line + '\n\n' +\
-                         infographic_hosPpl
+infographic_hosPpl, sign_res, diff_value = tweet_strings(rate_days, df, infographic_hosPpl,
+                                                      title_line,
+                                                      up_pattern, down_pattern,
+                                                      False, days_toCompute, moving_squares)
 
 
 ## Following up tweet with sources
 
 rt_expl = ""
 
-rt_exactNmb = f"Différence exacte depuis 24h: {sign_res}{new_hos}"
+rt_exactNmb = f"Différence exacte depuis 24h: {sign_res}{diff_value}"
 
 rt_sources = f"Sources et données: @SantePubliqueFr @datagouvfr" \
              f"\nhttps://www.data.gouv.fr/fr/datasets/synthese-des-indicateurs-de-suivi-de-lepidemie-covid-19/#_"
@@ -285,8 +315,6 @@ rt_hosPpl = rt_exactNmb + '\n' + rt_sources
 ## Parameters to construct the infographic
 empty_pattern = "⬛"
 filled_pattern = "⚰"
-down_pattern = "📉"
-up_pattern = "📈"
 
 
 ## Get only the required values from data
@@ -301,34 +329,20 @@ infographic_dcHos = info_bloc(rate_days,
                               filled_pattern)
 
 
-## Adding some top lines to emphasize the infographic
+## Create main tweet with top lines and infograph
 title_line = "Décès à l’hôpital pour COVID-19 (hors EHPAD/ESMS)"
 
-trend_res = up_pattern if rate_days.iloc[-1] > rate_days.iloc[-2] else down_pattern
-
-sign_res = "+" if trend_res == up_pattern else "-"
-new_hos = abs(rate_days.iloc[-1] - rate_days.iloc[-2])
-
-today_line = f"{df.loc[df.shape[0]-1, 'date']}: {rate_days.iloc[-1]} {trend_res}"
-
-lstDays_line = f"Tedance {days_toCompute} derniers jours"
-
-lgdSqr_line = f"Légende: {filled_pattern}≈ +{math.floor((max(rate_days) - min(rate_days))/moving_squares)}"
-
-
-## Wrap-up
-infographic_dcHos = title_line + '\n\n' +\
-                         today_line + '\n\n' +\
-                         lstDays_line + '\n' +\
-                         lgdSqr_line + '\n\n' +\
-                         infographic_dcHos
+infographic_dcHos, sign_res, diff_value = tweet_strings(rate_days, df, infographic_dcHos,
+                                                        title_line,
+                                                        up_pattern, down_pattern,
+                                                        False, days_toCompute, moving_squares)
 
 
 ## Following up tweet with sources
 
 rt_expl = ""
 
-rt_exactNmb = f"Différence exacte depuis 24h: {sign_res}{new_hos}"
+rt_exactNmb = f"Différence exacte depuis 24h: {sign_res}{diff_value}"
 
 rt_sources = f"Sources et données: @SantePubliqueFr @datagouvfr" \
              f"\nhttps://www.data.gouv.fr/fr/datasets/synthese-des-indicateurs-de-suivi-de-lepidemie-covid-19/#_"
@@ -339,12 +353,12 @@ rt_dcHos = rt_exactNmb + '\n' + rt_sources
 # print(infographic_hosOccRate)
 # print(infographic_hosPpl)
 # print(infographic_dcHos)
-
+#
 # twit_txtfile = infographic_hosOccRate + '\n' + rt_hosOccRate + '\n' +\
 #                infographic_hosPpl + '\n' + rt_hosPpl + '\n' + \
 #                infographic_dcHos + '\n' + rt_dcHos
-#
-#
+
+
 # with io.open('tweets.txt', 'w', encoding='utf8') as f:
 #     f.write(twit_txtfile)
 
@@ -352,7 +366,7 @@ rt_dcHos = rt_exactNmb + '\n' + rt_sources
 #=======================================================================================================================
 
 
-#Authenticate to Twitter
+# Authenticate to Twitter
 user_api = os.getenv("user_api")
 user_key = os.getenv("user_key")
 content_api = os.getenv("content_api")
@@ -404,6 +418,3 @@ api.update_status(infographic_dcHos)
 tweets = api.home_timeline(count=1)
 tweet = tweets[0]
 api.update_status(rt_dcHos, in_reply_to_status_id = tweet.id)
-
-
-
