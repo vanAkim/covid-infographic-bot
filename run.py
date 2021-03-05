@@ -175,7 +175,7 @@ def tweet_strings(data_byDays, data_pddf, infograph_bloc, title, up_emoji, down_
 
         today_line = f"{data_pddf.loc[data_pddf.shape[0] - 1, 'date']}: {color_res}{today_data} {trend_res}"
 
-        lstDays_line = f"👇Tendance {days_toCompute} derniers jours👇"
+        lstDays_line = f"👇Données {days_toCompute} derniers jours👇"
 
         lgdSqr_line = f"Légende: {filled_pattern}≈ {lgd_data}"
 
