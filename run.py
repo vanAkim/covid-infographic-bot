@@ -75,9 +75,9 @@ def info_bloc(data_byDays, moving_sqr, empty_motif, filled_motif):
         >>>data_byDays = pd.Series([199,167,413])
         >>>info_bloc(data_byDays, 2,"⬛","💟")
         '⬛⬛⬛
+        ⬛⬛💟 ← Max 413
         ⬛⬛💟
-        ⬛⬛💟
-        💟💟💟'
+        💟💟💟 ← Min 167'
         """
 
         ## Round up all values with specific function
@@ -101,8 +101,10 @@ def info_bloc(data_byDays, moving_sqr, empty_motif, filled_motif):
         ## Adding min and max next to lines
         idx_endMax = len(data_byDays)*2 + 1                             # include one '\n'
         idx_end = (len(data_byDays) + 1)*(moving_sqr + 2)
-        info_blocs = f"{info_blocs[0:idx_endMax]} ← Max {round(max(data_byDays),2)}{info_blocs[idx_endMax:idx_end]} " \
-                     f"← Min {round(min(data_byDays),2)}"
+
+        rounding = lambda x: round(x, 1 if x > 100 else 2)
+        info_blocs = f"{info_blocs[0:idx_endMax]} ← Max {rounding(max(data_byDays))}{info_blocs[idx_endMax:idx_end]} " \
+                     f"← Min {rounding(min(data_byDays))}"
 
         return info_blocs
 
@@ -353,7 +355,7 @@ rt_dcHos = rt_exactNmb + '\n' + rt_sources
 # print(infographic_hosOccRate)
 # print(infographic_hosPpl)
 # print(infographic_dcHos)
-#
+
 # twit_txtfile = infographic_hosOccRate + '\n' + rt_hosOccRate + '\n' +\
 #                infographic_hosPpl + '\n' + rt_hosPpl + '\n' + \
 #                infographic_dcHos + '\n' + rt_dcHos
