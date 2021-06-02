@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="7062b78b-757d-4099-af51-20306e3d3e46" name="Default Changelist" comment="Dynamic rounding min/max to avoid break line">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/run.py" afterDir="false" />
+    <list default="true" id="7062b78b-757d-4099-af51-20306e3d3e46" name="Default Changelist" comment="Force github action">
+      <change beforePath="$PROJECT_DIR$/.github/workflows/python-app.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/python-app.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -109,7 +108,14 @@
       <option name="project" value="LOCAL" />
       <updated>1617483694694</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Force github action">
+      <created>1622632806048</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1622632806048</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -131,6 +137,7 @@
     <MESSAGE value="Tweeting test v2" />
     <MESSAGE value="Retweet testing" />
     <MESSAGE value="Dynamic rounding min/max to avoid break line" />
-    <option name="LAST_COMMIT_MESSAGE" value="Dynamic rounding min/max to avoid break line" />
+    <MESSAGE value="Force github action" />
+    <option name="LAST_COMMIT_MESSAGE" value="Force github action" />
   </component>
 </project>
