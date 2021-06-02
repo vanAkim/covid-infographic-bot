@@ -212,6 +212,7 @@ url = "https://www.data.gouv.fr/fr/datasets/r/f335f9ea-86e3-4ffa-9684-93c009d5e6
 ## Load overall dataframe
 myfile = requests.get(url).content
 df = pd.read_csv(io.StringIO(myfile.decode('utf-8')))
+print(df.tail())
 
 
 ## Overall parameters to construct the infographic
@@ -228,44 +229,48 @@ up_pattern = "📈"
 empty_pattern = "⬛"
 filled_pattern = "💟"
 
+try:
+    ## Get only the required values from data
+    rate_days = df.loc[df.shape[0] - days_toCompute: df.shape[0] + 1,
+                 "TO"]
 
-## Get only the required values from data
-rate_days = df.loc[df.shape[0] - days_toCompute: df.shape[0] + 1,
-             "TO"]
-
-## Turn proportions into %
-rate_days = rate_days.apply(lambda x: x*100)
-
-
-## Create infographic bloc
-infographic_hosOccRate = info_bloc(rate_days,
-                               moving_squares,
-                               empty_pattern,
-                               filled_pattern)
+    ## Turn proportions into %
+    rate_days = rate_days.apply(lambda x: x*100)
 
 
-## Create main tweet with top lines and infograph
-title_line = "Tension hospitalière en réanimation"
+    ## Create infographic bloc
+    infographic_hosOccRate = info_bloc(rate_days,
+                                   moving_squares,
+                                   empty_pattern,
+                                   filled_pattern)
 
-infographic_hosOccRate, sign_res, diff_value = tweet_strings(rate_days, df, infographic_hosOccRate,
-                                                          title_line,
-                                                          up_pattern, down_pattern,
-                                                          True, days_toCompute, moving_squares)
 
-## Following up tweet with sources
+    ## Create main tweet with top lines and infograph
+    title_line = "Tension hospitalière en réanimation"
 
-rt_expl_hosOccRate = "Proportion de patients atteints de COVID-19 actuellement en réanimation, en soins intensifs, " \
-                     "ou en unité de surveillance continue rapportée au total des lits en capacité initiale, c’est-à-dire " \
-                     "avant d’augmenter les capacités de lits de réanimation dans un hôpital"
+    infographic_hosOccRate, sign_res, diff_value = tweet_strings(rate_days, df, infographic_hosOccRate,
+                                                              title_line,
+                                                              up_pattern, down_pattern,
+                                                              True, days_toCompute, moving_squares)
 
-rt_exactNmb = f"Différence exacte depuis 24h: {sign_res}{round(diff_value,2)}%"
+    ## Following up tweet with sources
 
-rt_sources = f"Sources et données: @SantePubliqueFr @datagouvfr" \
-             f"\nhttps://www.data.gouv.fr/fr/datasets/synthese-des-indicateurs-de-suivi-de-lepidemie-covid-19/#_" \
-             f"\nhttps://www.data.gouv.fr/fr/datasets/indicateurs-de-suivi-de-lepidemie-de-covid-19/#_"
+    rt_expl_hosOccRate = "Proportion de patients atteints de COVID-19 actuellement en réanimation, en soins intensifs, " \
+                         "ou en unité de surveillance continue rapportée au total des lits en capacité initiale, c’est-à-dire " \
+                         "avant d’augmenter les capacités de lits de réanimation dans un hôpital"
 
-rt_hosOccRate = rt_exactNmb + '\n' + rt_sources
+    rt_exactNmb = f"Différence exacte depuis 24h: {sign_res}{round(diff_value,2)}%"
 
+    rt_sources = f"Sources et données: @SantePubliqueFr @datagouvfr" \
+                 f"\nhttps://www.data.gouv.fr/fr/datasets/synthese-des-indicateurs-de-suivi-de-lepidemie-covid-19/#_" \
+                 f"\nhttps://www.data.gouv.fr/fr/datasets/indicateurs-de-suivi-de-lepidemie-de-covid-19/#_"
+
+    rt_hosOccRate = rt_exactNmb + '\n' + rt_sources
+
+    no_hosOccRate = False
+
+except:
+    no_hosOccRate = True
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Nombre de patients actuellement hospitalisés pour COVID-19
@@ -275,95 +280,101 @@ rt_hosOccRate = rt_exactNmb + '\n' + rt_sources
 empty_pattern = "⬛"
 filled_pattern = "🥼"
 
-
-## Get only the required values from data
-rate_days = df.loc[df.shape[0] - days_toCompute: df.shape[0] + 1,
-             "hosp"].astype(int)
-
-
-## Create infographic bloc
-infographic_hosPpl = info_bloc(rate_days,
-                               moving_squares,
-                               empty_pattern,
-                               filled_pattern)
+try:
+    ## Get only the required values from data
+    rate_days = df.loc[df.shape[0] - days_toCompute: df.shape[0] + 1,
+                 "hosp"].astype(int)
 
 
-## Create main tweet with top lines and infograph
-title_line = "Patients hospitalisés pour COVID-19"
+    ## Create infographic bloc
+    infographic_hosPpl = info_bloc(rate_days,
+                                   moving_squares,
+                                   empty_pattern,
+                                   filled_pattern)
 
 
-infographic_hosPpl, sign_res, diff_value = tweet_strings(rate_days, df, infographic_hosPpl,
-                                                      title_line,
-                                                      up_pattern, down_pattern,
-                                                      False, days_toCompute, moving_squares)
+    ## Create main tweet with top lines and infograph
+    title_line = "Patients hospitalisés pour COVID-19"
 
 
-## Following up tweet with sources
+    infographic_hosPpl, sign_res, diff_value = tweet_strings(rate_days, df, infographic_hosPpl,
+                                                          title_line,
+                                                          up_pattern, down_pattern,
+                                                          False, days_toCompute, moving_squares)
 
-rt_expl = ""
 
-rt_exactNmb = f"Différence exacte depuis 24h: {sign_res}{diff_value}"
+    ## Following up tweet with sources
 
-rt_sources = f"Sources et données: @SantePubliqueFr @datagouvfr" \
-             f"\nhttps://www.data.gouv.fr/fr/datasets/synthese-des-indicateurs-de-suivi-de-lepidemie-covid-19/#_"
+    rt_expl = ""
 
-rt_hosPpl = rt_exactNmb + '\n' + rt_sources
+    rt_exactNmb = f"Différence exacte depuis 24h: {sign_res}{diff_value}"
 
+    rt_sources = f"Sources et données: @SantePubliqueFr @datagouvfr" \
+                 f"\nhttps://www.data.gouv.fr/fr/datasets/synthese-des-indicateurs-de-suivi-de-lepidemie-covid-19/#_"
+
+    rt_hosPpl = rt_exactNmb + '\n' + rt_sources
+
+    no_hosPpl = False
+
+except:
+    no_hosPpl = True
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Nouveaux patients décédés à l’hôpital au cours des dernières 24h pour cause de COVID-19
 
 
-## Parameters to construct the infographic
+# Parameters to construct the infographic
 empty_pattern = "⬛"
 filled_pattern = "⚰"
 
-
-## Get only the required values from data
-rate_days = df.loc[df.shape[0] - days_toCompute: df.shape[0] + 1,
-             "incid_dchosp"].astype(int)
-
-
-## Create infographic bloc
-infographic_dcHos = info_bloc(rate_days,
-                              moving_squares,
-                              empty_pattern,
-                              filled_pattern)
+try:
+    ## Get only the required values from data
+    rate_days = df.loc[df.shape[0] - days_toCompute: df.shape[0] + 1,
+                 "incid_dchosp"].astype(int)
 
 
-## Create main tweet with top lines and infograph
-title_line = "Décès à l’hôpital pour COVID-19 (hors EHPAD/ESMS)"
-
-infographic_dcHos, sign_res, diff_value = tweet_strings(rate_days, df, infographic_dcHos,
-                                                        title_line,
-                                                        up_pattern, down_pattern,
-                                                        False, days_toCompute, moving_squares)
+    ## Create infographic bloc
+    infographic_dcHos = info_bloc(rate_days,
+                                  moving_squares,
+                                  empty_pattern,
+                                  filled_pattern)
 
 
-## Following up tweet with sources
+    ## Create main tweet with top lines and infograph
+    title_line = "Décès à l’hôpital pour COVID-19 (hors EHPAD/ESMS)"
 
-rt_expl = ""
-
-rt_exactNmb = f"Différence exacte depuis 24h: {sign_res}{diff_value}"
-
-rt_sources = f"Sources et données: @SantePubliqueFr @datagouvfr" \
-             f"\nhttps://www.data.gouv.fr/fr/datasets/synthese-des-indicateurs-de-suivi-de-lepidemie-covid-19/#_"
-
-rt_dcHos = rt_exactNmb + '\n' + rt_sources
+    infographic_dcHos, sign_res, diff_value = tweet_strings(rate_days, df, infographic_dcHos,
+                                                            title_line,
+                                                            up_pattern, down_pattern,
+                                                            False, days_toCompute, moving_squares)
 
 
-# print(infographic_hosOccRate)
-# print(infographic_hosPpl)
-# print(infographic_dcHos)
+    ## Following up tweet with sources
 
-# twit_txtfile = infographic_hosOccRate + '\n' + rt_hosOccRate + '\n' +\
-#                infographic_hosPpl + '\n' + rt_hosPpl + '\n' + \
-#                infographic_dcHos + '\n' + rt_dcHos
+    rt_expl = ""
+
+    rt_exactNmb = f"Différence exacte depuis 24h: {sign_res}{diff_value}"
+
+    rt_sources = f"Sources et données: @SantePubliqueFr @datagouvfr" \
+                 f"\nhttps://www.data.gouv.fr/fr/datasets/synthese-des-indicateurs-de-suivi-de-lepidemie-covid-19/#_"
+
+    rt_dcHos = rt_exactNmb + '\n' + rt_sources
+
+    no_dcHos = False
+
+except:
+    no_dcHos = True
 
 
-# with io.open('tweets.txt', 'w', encoding='utf8') as f:
-#     f.write(twit_txtfile)
+#=======================================================================================================================
+# Debugging tests
 
+# if not no_hosOccRate:
+#     print(infographic_hosOccRate)
+# if not no_hosPpl:
+#     print(infographic_hosPpl)
+# if not no_dcHos:
+#     print(infographic_dcHos)
 
 #=======================================================================================================================
 
@@ -388,35 +399,36 @@ except:
 
 # Write main tweets
 
-## Hosp rate infographic tweet
-api.update_status(infographic_hosOccRate)
+if not no_hosOccRate:
+    ## Hosp rate infographic tweet
+    api.update_status(infographic_hosOccRate)
 
-## Retweet with explanation about the metric
-tweets = api.home_timeline(count=1)
-tweet = tweets[0]
-api.update_status(rt_expl_hosOccRate, in_reply_to_status_id = tweet.id)
+    ## Retweet with explanation about the metric
+    tweets = api.home_timeline(count=1)
+    tweet = tweets[0]
+    api.update_status(rt_expl_hosOccRate, in_reply_to_status_id = tweet.id)
 
-## Retweet with sources
-tweets = api.home_timeline(count=1)
-tweet = tweets[0]
-api.update_status(rt_hosOccRate, in_reply_to_status_id = tweet.id)
-
-
-
-## Hosp ppl infographic tweet
-api.update_status(infographic_hosPpl)
-
-## Retweet with sources
-tweets = api.home_timeline(count=1)
-tweet = tweets[0]
-api.update_status(rt_hosPpl, in_reply_to_status_id = tweet.id)
+    ## Retweet with sources
+    tweets = api.home_timeline(count=1)
+    tweet = tweets[0]
+    api.update_status(rt_hosOccRate, in_reply_to_status_id = tweet.id)
 
 
+if not no_hosPpl:
+    ## Hosp ppl infographic tweet
+    api.update_status(infographic_hosPpl)
 
-## Death infographic tweet
-api.update_status(infographic_dcHos)
+    ## Retweet with sources
+    tweets = api.home_timeline(count=1)
+    tweet = tweets[0]
+    api.update_status(rt_hosPpl, in_reply_to_status_id = tweet.id)
 
-## Retweet with sources
-tweets = api.home_timeline(count=1)
-tweet = tweets[0]
-api.update_status(rt_dcHos, in_reply_to_status_id = tweet.id)
+
+if not no_dcHos:
+    # Death infographic tweet
+    api.update_status(infographic_dcHos)
+
+    ## Retweet with sources
+    tweets = api.home_timeline(count=1)
+    tweet = tweets[0]
+    api.update_status(rt_dcHos, in_reply_to_status_id = tweet.id)
